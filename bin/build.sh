@@ -70,7 +70,7 @@ cd /opt/alces-bootserver/
 #Create a dhcpd.conf file for the network in vars assuming
 #that the tftp server is going to be defined in the vars file.
 
-cat << "EOF" > etc/dhcpd.conf
+cat << EOF > etc/dhcpd.conf
 # dhcpd.conf
 #
 
@@ -97,7 +97,7 @@ cp /usr/share/syslinux/{vesamenu.c32,pxelinux.0} tftpboot/.
 #how to generate the pxe menu
 
 mkdir -p tftpboot/pxelinux.cfg
-cat << "EOF" > tftpboot/pxelinux.cfg/default
+cat << EOF > tftpboot/pxelinux.cfg/default
 DEFAULT vesamenu.c32
 PROMPT 0
 MENU TITLE PXE Menu
@@ -116,3 +116,5 @@ label 2
   append initrd=./initramfs.img rd.live.image root=live:http://$BUILDSERVER/squashfs_custom2.img disable_ipv6=yes 3
 EOF
 
+cp $BASEPATH/bin/start.sh bin/.
+cp $BASEPATH/bin/stop.sh bin/.
