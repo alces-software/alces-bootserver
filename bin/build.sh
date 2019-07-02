@@ -21,7 +21,7 @@ rm -rf /opt/alces-bootserver/build #!!!!!!!!!!!!!!!!!!!!!!!!!
 yum -y -e0 groupinstall "Development Tools"
 yum -y -e0 install glibc-static syslinux
 
-mkdir -p /opt/alces-bootserver/{bin,etc,libexec,build,tftpboot,resources} && cd /opt/alces-bootserver/build
+mkdir -p /opt/alces-bootserver/{bin,etc,var,libexec,build,tftpboot,resources} && cd /opt/alces-bootserver/build
 
 #isc-dhcp server
 wget ftp://ftp.isc.org/isc/dhcp/4.4.1/dhcp-4.4.1.tar.gz
@@ -118,3 +118,4 @@ EOF
 
 cp $BASEPATH/start.sh bin/.
 cp $BASEPATH/stop.sh bin/.
+chmod +x bin/*
