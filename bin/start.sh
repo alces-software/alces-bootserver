@@ -22,6 +22,6 @@ ${LIBEXECDIR}/tftpd/tftpd --listen -spvvv ${TFTPDIR} -P ${LOGDIR}/tftpd.pid 2>&1
 
 #Start HTTP Server
 
-${LIBEXECDIR}/${NODEDIR}/bin/node ${LIBEXECDIR}/${HTTPSERVER}/bin/http-server -p 80 ${HTTPSRVDIR} 2>&1 >> ${LOGDIR}/http_server.log & echo $! > ${LOGDIR}/http.pid
+${LIBEXECDIR}/${NODEDIR}/bin/node ${LIBEXECDIR}/${HTTPSERVER}/bin/http-server -p 80 ${HTTPSRVDIR} >> ${LOGDIR}/http_server.log 2>&1 & echo $! > ${LOGDIR}/http.pid &
 
 echo "Successfully started alces-bootserver."

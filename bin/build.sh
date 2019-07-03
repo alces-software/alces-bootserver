@@ -19,7 +19,7 @@ rm -rf /opt/alces-bootserver/build #!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #Install build utils
 yum -y -e0 groupinstall "Development Tools"
-yum -y -e0 install glibc-static syslinux
+yum -y -e0 install glibc-static syslinux wget
 
 mkdir -p /opt/alces-bootserver/{bin,etc,var,libexec,build,tftpboot,resources} && cd /opt/alces-bootserver/build
 
