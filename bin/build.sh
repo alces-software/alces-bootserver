@@ -116,6 +116,6 @@ label 2
   append initrd=./initramfs.img rd.live.image root=live:http://$BUILDSERVER/squashfs_custom2.img disable_ipv6=yes 3
 EOF
 
-cp $BASEPATH/start.sh bin/.
-cp $BASEPATH/stop.sh bin/.
+cp $BASEPATH/libexec/start.sh bin/.
+cp $BASEPATH/libexec/stop.sh bin/.
 chmod +x bin/*
