@@ -88,7 +88,8 @@ LABEL 1 local
 label 2
   menu label ^2) Install CentOS 7 Manually
   kernel ./vmlinuz
-  append initrd=centos_7.6.1810/images/pxeboot/initrd.img method=http://10.150.0.10/repo/centos/7.6.1810/base inst.vnc
+  append initrd=initrd.img method=http://10.151.0.11/centos7
 EOF
 
 say_done $?
+
