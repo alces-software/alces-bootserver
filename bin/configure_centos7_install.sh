@@ -57,7 +57,7 @@ say_done $?
 
 
 doing "Mounting boot media to be served by HTTP"
-mkdir -p ${HTTPBASE}
+mkdir -p ${HTTPBASE}/centos7
 mount -o loop,ro ${HTTPBASE}/CentOS-7-x86_64-DVD-1810.iso ${HTTPBASE}/centos7
 say_done $?
 

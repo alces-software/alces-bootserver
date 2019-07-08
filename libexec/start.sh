@@ -18,7 +18,7 @@ ${LIBEXECDIR}/dhcpd/dhcpd -cf ${ETCDIR}/dhcpd.conf -pf ${LOGDIR}/dhcpd.pid -lf $
 
 #Start TFTP Server
 
-${LIBEXECDIR}/tftpd/tftpd --listen -spvvv ${TFTPDIR} -P ${LOGDIR}/tftpd.pid 2>&1 >> ${LOGDIR}/tftp_server.log &
+${LIBEXECDIR}/tftpd/tftpd --listen -u root -spvvv ${TFTPDIR} -P ${LOGDIR}/tftpd.pid 2>&1 >> ${LOGDIR}/tftp_server.log &
 
 #Start HTTP Server
 

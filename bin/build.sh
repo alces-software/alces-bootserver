@@ -110,10 +110,6 @@ LABEL 1 local
   MENU DEFAULT
   LOCALBOOT 0
 
-label 2
-  menu label ^2) Boot CentOS 7.6.1810 LiveCD
-  kernel ./vmlinuz
-  append initrd=./initramfs.img rd.live.image root=live:http://$BUILDSERVER/squashfs_custom2.img disable_ipv6=yes 3
 EOF
 
 cp $BASEPATH/../libexec/start.sh bin/.
