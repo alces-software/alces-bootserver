@@ -10,18 +10,23 @@
 
 BASEPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/"
 source $BASEPATH/../etc/vars
-
+#Ensure we die if anything breaks from here on in.
 set -e
 
+if [ -z $INSTALLDIR ] ; then
+  echo "Installation directory is not set in vars file."
+  exit 1
+fi
+
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-rm -rf /opt/alces-bootserver/build #!!!!!!!!!!!!!!!!!!!!!!!!!
+rm -rf ${INSTALLDIR}/build #!!!!!!!!!!!!!!!!!!!!!!!!!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #Install build utils
 yum -y -e0 groupinstall "Development Tools"
 yum -y -e0 install glibc-static syslinux wget
 
-mkdir -p /opt/alces-bootserver/{bin,etc,var,libexec,build,tftpboot,resources} && cd /opt/alces-bootserver/build
+mkdir -p ${INSTALLDIR}/{bin,etc,var,libexec,build,tftpboot,resources} && cd ${INSTALLDIR}/build
 
 #isc-dhcp server
 wget ftp://ftp.isc.org/isc/dhcp/4.4.1/dhcp-4.4.1.tar.gz
@@ -37,10 +42,10 @@ wget https://github.com/indexzero/http-server/archive/0.10.0.tar.gz
 tar -zxvf dhcp-4.4.1.tar.gz && cd dhcp-4.4.1
 CFLAGS="-static" ./configure
 make
-mkdir -p /opt/alces-bootserver/libexec/dhcpd
-cp server/dhcpd /opt/alces-bootserver/libexec/dhcpd
+mkdir -p ${INSTALLDIR}/libexec/dhcpd
+cp server/dhcpd ${INSTALLDIR}/libexec/dhcpd
 
-cd /opt/alces-bootserver/build
+cd ${INSTALLDIR}/build
 
 #Build TFTP Server
 tar -zxvf tftp-hpa-5.2.tar.gz
@@ -49,23 +54,23 @@ CFLAGS="-static" ./autogen.sh
 CFLAGS="-static" ./configure
 CFLAGS="-static" make
 cd tftpd && gcc -static tftpd.o recvfrom.o misc.o remap.o ../common/libcommon.a ../lib/libxtra.a -lnsl -o tftpd
-mkdir -p /opt/alces-bootserver/libexec/tftpd
-cp tftpd /opt/alces-bootserver/libexec/tftpd/.
+mkdir -p ${INSTALLDIR}/libexec/tftpd
+cp tftpd ${INSTALLDIR}/libexec/tftpd/.
 
-cd /opt/alces-bootserver/build
+cd ${INSTALLDIR}/build
 
 
 #Configure Node.js & install http server
 tar -xvf node-v12.5.0-linux-x64.tar.xz
-mkdir -p /opt/alces-bootserver/libexec/node-v12.5.0
-cp -Rv node-v12.5.0-linux-x64/* /opt/alces-bootserver/libexec/node-v12.5.0
+mkdir -p ${INSTALLDIR}/libexec/node-v12.5.0
+cp -Rv node-v12.5.0-linux-x64/* ${INSTALLDIR}/libexec/node-v12.5.0
 tar -zxvf 0.10.0.tar.gz
 cd http-server-0.10.0
-PATH=/opt/alces-bootserver/libexec/node-v12.5.0/bin:$PATH npm i
-cd /opt/alces-bootserver/build
-cp -Rv http-server-0.10.0 /opt/alces-bootserver/libexec/.
+PATH=${INSTALLDIR}/libexec/node-v12.5.0/bin:$PATH npm i
+cd ${INSTALLDIR}/build
+cp -Rv http-server-0.10.0 ${INSTALLDIR}/libexec/.
 
-cd /opt/alces-bootserver/
+cd ${INSTALLDIR}
 
 #Create a dhcpd.conf file for the network in vars assuming
 #that the tftp server is going to be defined in the vars file.
@@ -114,4 +119,8 @@ EOF
 
 cp $BASEPATH/../libexec/start.sh bin/.
 cp $BASEPATH/../libexec/stop.sh bin/.
+cat << EOF > etc/config
+BASEDIR=${INSTALLDIR}
+EOF
+
 chmod +x bin/*

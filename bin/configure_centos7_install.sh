@@ -3,8 +3,11 @@
 # Script to download correct files and generate a sane pxelinux.cfg/default
 # file to be able to quickly PXE boot and install CentOS7.
 
-BUILDSERVERBASE='/opt/alces-bootserver'
-HTTPBASE='/opt/alces-bootserver/resources'
+BASEPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/"
+source $BASEPATH/../etc/vars
+
+BUILDSERVERBASE=${INSTALLDIR}
+HTTPBASE="${BUILDSERVERBASE}/resources"
 ISOMIRROR='http://mirror.ox.ac.uk/sites/mirror.centos.org/7.6.1810/isos/x86_64/CentOS-7-x86_64-DVD-1810.iso'
 
 if [ -e $HTTPBASE/CentOS-7-x86_64-DVD-1810.iso ] ;

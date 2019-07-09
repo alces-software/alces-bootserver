@@ -1,14 +1,17 @@
 #!/bin/bash
+BASEPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/"
+source $BASEPATH/../etc/config
 
 set -e
 
-LIBEXECDIR='/opt/alces-bootserver/libexec'
-ETCDIR='/opt/alces-bootserver/etc'
-LOGDIR='/opt/alces-bootserver/var'
-TFTPDIR='/opt/alces-bootserver/tftpboot'
+INSTALLDIR="${BASEDIR}"
+LIBEXECDIR="${INSTALLDIR}/libexec"
+ETCDIR="${INSTALLDIR}/etc"
+LOGDIR="${INSTALLDIR}/var"
+TFTPDIR="${INSTALLDIR}/tftpboot"
 NODEDIR='node-v12.5.0'
 HTTPSERVER='http-server-0.10.0'
-HTTPSRVDIR='/opt/alces-bootserver/resources'
+HTTPSRVDIR="${INSTALLDIR}/resources"
 
 #Start DHCP Server
 
