@@ -3,6 +3,7 @@ BASEPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/"
 source $BASEPATH/../etc/config
 
 set -e
+trap 'echo Could not start alces-bootserver, check logs.' ERR
 
 INSTALLDIR="${BASEDIR}"
 LIBEXECDIR="${INSTALLDIR}/libexec"

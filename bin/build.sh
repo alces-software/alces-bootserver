@@ -12,6 +12,7 @@ BASEPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/"
 source $BASEPATH/../etc/vars
 #Ensure we die if anything breaks from here on in.
 set -e
+trap 'echo Could not build alces-bootserver, check logs.' ERR
 
 if [ -z $INSTALLDIR ] ; then
   echo "Installation directory is not set in vars file."

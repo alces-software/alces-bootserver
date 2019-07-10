@@ -18,6 +18,7 @@ fi
 
 # ensure all children die when we do
 trap "/bin/kill -- -$BASHPID &>/dev/null" EXIT INT TERM
+trap 'echo Could not install CentOS7 to alces-bootserver, check logs.' ERR
 
 function title() {
     printf "\n > $1\n"
