@@ -6,7 +6,10 @@
 BASEPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/"
 source $BASEPATH/../etc/vars
 
+set -e
 BUILDSERVERBASE=${INSTALLDIR}
+LOGBASE="${INSTALLDIR}/var"
+LOGFILE="${LOGBASE}/centos7_configure.log"
 HTTPBASE="${BUILDSERVERBASE}/resources"
 ISOMIRROR='http://mirror.ox.ac.uk/sites/mirror.centos.org/7.6.1810/isos/x86_64/CentOS-7-x86_64-DVD-1810.iso'
 
@@ -15,67 +18,36 @@ then
   echo "Media already downloaded, remove $HTTPBASE/CentOS-7-x86_64-DVD-1810.iso if image not mounting"
 fi
 
-
-# ensure all children die when we do
-trap "/bin/kill -- -$BASHPID &>/dev/null" EXIT INT TERM
 trap 'echo Could not install CentOS7 to alces-bootserver, check logs.' ERR
 
-function title() {
-    printf "\n > $1\n"
-}
-
-function doing() {
-    if [ -z "$2" ]; then
-        pad=12
-    else
-        pad=$2
-    fi
-    printf "    %${pad}s ... " "$1"
-
-}
-
-function say_done () {
-    if [ $1 -gt 0 ]; then
-        echo 'FAIL'
-        exit 1
-    else
-        echo 'OK '
-    fi
-}
-
 download_media() {
-doing "Downloading boot media from mirror"
-wget --quiet -O $HTTPBASE/CentOS-7-x86_64-DVD-1810.iso $ISOMIRROR
-say_done $?
+echo "Downloading boot media from mirror"
+curl -vs $ISOMIRROR -o $HTTPBASE/CentOS-7-x86_64-DVD-1810.iso >> ${LOGFILE} 2>&1
 }
 
-title "Preparing Media"
+echo "> Preparing Media"
 if [ ! -e $HTTPBASE/CentOS-7-x86_64-DVD-1810.iso ] ;
 then
   download_media
 fi
 
-doing "Putting pxeboot files in place"
-cp /usr/share/syslinux/{vesamenu.c32,pxelinux.0} ${BUILDSERVERBASE}/tftpboot/.
-say_done $?
+echo "    Putting pxeboot files in place"
+cp /usr/share/syslinux/{vesamenu.c32,pxelinux.0} ${BUILDSERVERBASE}/tftpboot/. >> ${LOGFILE} 2>&1
 
 
-doing "Mounting boot media to be served by HTTP"
+echo "    Mounting boot media to be served by HTTP"
 mkdir -p ${HTTPBASE}/centos7
-mount -o loop,ro ${HTTPBASE}/CentOS-7-x86_64-DVD-1810.iso ${HTTPBASE}/centos7
-say_done $?
+mount -o loop,ro ${HTTPBASE}/CentOS-7-x86_64-DVD-1810.iso ${HTTPBASE}/centos7 >> ${LOGFILE} 2>&1
 
-doing "Putting kernel in place"
-cp ${HTTPBASE}/centos7/images/pxeboot/vmlinuz ${BUILDSERVERBASE}/tftpboot/.
-say_done $?
+echo "    Putting kernel in place"
+cp ${HTTPBASE}/centos7/images/pxeboot/vmlinuz ${BUILDSERVERBASE}/tftpboot/. >> ${LOGFILE} 2>&1
 
-doing "Putting initrd in place"
-cp ${HTTPBASE}/centos7/images/pxeboot/initrd.img ${BUILDSERVERBASE}/tftpboot/.
-say_done $?
+echo "    Putting initrd in place"
+cp ${HTTPBASE}/centos7/images/pxeboot/initrd.img ${BUILDSERVERBASE}/tftpboot/. >> ${LOGFILE} 2>&1
 
-title "Generating configurations"
+echo "> Generating configurations"
 
-doing "pxeboot.cfg/default configuration"
+echo "   pxeboot.cfg/default configuration"
 cat << EOF > ${BUILDSERVERBASE}/tftpboot/pxelinux.cfg/default
 DEFAULT vesamenu.c32
 PROMPT 0
@@ -92,8 +64,7 @@ LABEL 1 local
 label 2
   menu label ^2) Install CentOS 7 Manually
   kernel ./vmlinuz
-  append initrd=initrd.img method=http://10.151.0.11/centos7
+  append initrd=initrd.img method=http://$BUILDSERVER/centos7
 EOF
 
-say_done $?
-
+echo "Completed - logs at ${LOGFILE}"
